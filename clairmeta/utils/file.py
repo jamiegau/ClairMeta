@@ -87,6 +87,7 @@ def temporary_dir():
         shutil.rmtree(dirpath)
 
 
+<<<<<<< HEAD
 class ConsoleProgress(object):
 
     def __init__(self):
@@ -144,9 +145,49 @@ class ConsoleProgress(object):
 
             self.total_processed += file_size
             self.total_elapsed += file_elapsed
+=======
+def console_progress_bar(file_path, file_progress, total_progress, dcp_size, elapsed, done):
+    """ Console Progress Bar callback for shaone_b64.
+
+        Args:
+            file_path (str): File absolute path.
+            file_progress (float): Progression of current file, interval 0..1.
+            total_progress (float): Progression of all files in DCP, interval 0..1.
+            dcp_size (int): total size of dcp
+            elapsed (float): Seconds elapsed.
+            done (boolean): Completion status.
+
+    """
+    col_width = 15
+    complete_col_width = 50
+
+    if not done:
+        file_progress_size = int(file_progress * col_width)
+        file_eta_size = col_width - file_progress_size
+        total_progress_size = int(total_progress * col_width)
+        total_eta_size = col_width - total_progress_size
 
 
-def shaone_b64(file_path, callback=None):
+        sys.stdout.write("Total[{}] {:.2f}% - File[{}] {:.2f}% - {}\r".format(
+            "{}{}".format('=' * total_progress_size, ' ' * total_eta_size),
+            total_progress * 100.0,
+            "{}{}".format('=' * file_progress_size, ' ' * file_eta_size),
+            file_progress * 100.0,
+            os.path.basename(file_path)))
+        sys.stdout.flush()
+    else:
+        file_size = os.path.getsize(file_path)
+        speed_report = "{} in {:.2f} sec (at {:.2f} MBytes/s)".format(
+            human_size(file_size), elapsed, (file_size / 1e6) / elapsed)
+
+        sys.stdout.write("[  {}] 100.00% - {}\r".format(
+            speed_report.ljust(complete_col_width - 2),
+            os.path.basename(file_path)))
+        sys.stdout.write("\n")
+>>>>>>> Fixed subtitle check, and added total_progress to hash_callback
+
+
+def shaone_b64(file_path, dcp_size, total_data_processed, callback=None):
     """ Compute file hash using sha1 algorithm.
 
         Args:
@@ -179,12 +220,22 @@ def shaone_b64(file_path, callback=None):
 
             run_size += len(data)
             sha1.update(data)
+<<<<<<< HEAD
 
             call_cb = time.time() - last_cb_time > 0.2
             complete = run_size == file_size
             if callback and (call_cb or complete):
                 last_cb_time = time.time()
                 callback(file_path, run_size, file_size, time.time() - start)
+=======
+            progress = min(1, (run_size / file_size))
+            total_progress = min(1, ((total_data_processed + run_size) / dcp_size))
+            if callback:
+                callback(file_path, progress, total_progress, dcp_size, time.time() - start, False)
+
+    if callback:
+        callback(file_path, progress, total_progress, dcp_size, time.time() - start, True)
+>>>>>>> Fixed subtitle check, and added total_progress to hash_callback
 
     # Encode base64 and remove carriage return
     sha1b64 = base64.b64encode(sha1.digest())
