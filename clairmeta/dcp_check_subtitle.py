@@ -430,6 +430,8 @@ class Checker(CheckerBase):
         # checking if the specific hierarchy is valid or not.
         all_text = self.st_util.extract_subtitle_text(subtitles[0], [])
         unique_chars = set()
+<<<<<<< HEAD
+=======
         all_text = []
         for st in subtitles[0]:
             if isinstance(st['Text'], str):
@@ -437,6 +439,7 @@ class Checker(CheckerBase):
             else:
                 for st2 in st['Text']:
                     all_text.append(st2['Text'])
+>>>>>>> Fixed subtitle check, and added total_progress to hash_callback
         for text in all_text:
             for char in text:
                 unique_chars.add(char)
