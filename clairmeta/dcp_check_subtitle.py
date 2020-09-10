@@ -430,13 +430,6 @@ class Checker(CheckerBase):
         # checking if the specific hierarchy is valid or not.
         all_text = self.st_util.extract_subtitle_text(subtitles[0], [])
         unique_chars = set()
-        all_text = []
-        for st in subtitles[0]:
-            if isinstance(st['Text'], str):
-                all_text.append(st['Text'])
-            else:
-                for st2 in st['Text']:
-                    all_text.append(st2['Text'])
         for text in all_text:
             for char in text:
                 unique_chars.add(char)
